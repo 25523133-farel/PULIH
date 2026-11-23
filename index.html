@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0077B6">
+  <title>PULIH · Sistem Manajemen Kontrol Pasien PTM</title>
+  <link rel="preload" href="assets/fonts/atkinson-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/atkinson-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <!-- Ikon (garis 2px, gaya Lucide) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+      <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></symbol>
+      <symbol id="i-clipboard" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+      <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+      <symbol id="i-steth" viewBox="0 0 24 24"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+      <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+      <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    </defs>
+  </svg>
+
+  <a class="skip" href="#utama">Langsung ke Isi Utama</a>
+
+  <header class="topbar">
+    <div class="wrap topbar__in">
+      <a class="brand" href="#jadwal" data-nav="booking" aria-label="PULIH, halaman utama">
+        <svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true">
+          <rect width="40" height="40" rx="11" fill="#0077B6"/>
+          <path d="M8 21h6l3-7 5 13 3-6h7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="32" cy="21" r="2.6" fill="#00B4D8"/>
+        </svg>
+        <span class="brand__name">PULIH</span>
+        <span class="brand__tag" id="role-badge">Pasien</span>
+      </a>
+
+      <!-- Menu Navigasi Pasien (FR-03 s.d. FR-08) -->
+      <nav class="mainnav" id="patient-nav" aria-label="Menu pasien">
+        <a href="#jadwal" data-nav="booking" aria-current="page"><svg class="ic"><use href="#i-calendar"/></svg>Jadwal &amp; Antrean</a>
+        <a href="#riwayat" data-nav="riwayat"><svg class="ic"><use href="#i-history"/></svg>Riwayat Kontrol</a>
+        <a href="#hasil" data-nav="hasil"><svg class="ic"><use href="#i-clipboard"/></svg>Hasil Pemeriksaan</a>
+        <a href="#reminder" data-nav="notifikasi"><svg class="ic"><use href="#i-bell"/></svg>Reminder<span class="dot" id="nav-dot" aria-label="Pengingat aktif">1</span></a>
+      </nav>
+
+      <!-- Menu Navigasi Admin (FR-01, FR-02, FR-06, FR-07) -->
+      <nav class="mainnav" id="admin-nav" aria-label="Menu admin" hidden>
+        <a href="#admin-kehadiran" data-admin-nav="kehadiran" aria-current="page"><svg class="ic"><use href="#i-check"/></svg>Verifikasi Kehadiran</a>
+        <a href="#admin-registrasi" data-admin-nav="registrasi"><svg class="ic"><use href="#i-user-plus"/></svg>Registrasi Pasien</a>
+        <a href="#admin-aktivasi" data-admin-nav="aktivasi"><svg class="ic"><use href="#i-shield"/></svg>Aktivasi Akun</a>
+        <a href="#admin-reminder" data-admin-nav="reminder"><svg class="ic"><use href="#i-bell"/></svg>Kirim Reminder</a>
+      </nav>
+
+      <div class="tools">
+        <button type="button" class="btn-role" id="switch-role-btn" title="Beralih antara tampilan Pasien dan Panel Admin">
+          <svg class="ic"><use href="#i-users"/></svg>
+          <span id="switch-role-label">Panel Admin</span>
+        </button>
+        <div class="textsize" role="group" aria-label="Ukuran huruf">
+          <button type="button" data-size="md" aria-pressed="true" aria-label="Huruf biasa">A</button>
+          <button type="button" data-size="lg" aria-pressed="false" aria-label="Huruf besar">A</button>
+          <button type="button" data-size="xl" aria-pressed="false" aria-label="Huruf sangat besar">A</button>
+        </div>
+        <button type="button" class="btn-quiet" id="logout-btn" title="Ganti akun pasien atau keluar">
+          <svg class="ic"><use href="#i-logout"/></svg><span>Ganti Pasien</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="utama" class="wrap page">
+
+    <!-- =====================================================
+         MODE 1: APLIKASI PASIEN (RAMAH LANSIA)
+         Mencakup: Reminder Kontrol, Lihat Jadwal Kontrol,
+         Booking Jadwal Kontrol, Lihat Nomor Antrean, Riwayat Kontrol
+         ===================================================== -->
+    <div id="patient-app" class="app-view">
+      <section class="greet">
+        <div class="greet__top">
+          <div>
+            <h1><span id="greet-time">Selamat siang</span>, <span id="patient-name">Ibu Siti Aminah</span></h1>
+            <p id="today" class="greet__date">Senin, 23 November 2026</p>
+          </div>
+          <div class="patient-chip" id="patient-meta">
+            <span class="badge badge--ok"><svg class="ic"><use href="#i-shield"/></svg>Akun Aktif (Siap Pakai)</span>
+            <span class="badge" id="patient-rm">RM-2026-0104 · BPJS</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 1A: BERANDA (LIHAT NOMOR ANTREAN, REMINDER, LIHAT JADWAL & BOOKING) -->
+      <div id="view-booking" class="subview">
+        <!-- FITUR 3: LIHAT NOMOR ANTREAN (FR-05 / US-05)
+             Tampil paling atas setelah booking agar pasien tidak menunggu lama di tempat
+             dan bisa datang sesuai estimasi waktu nomor antrean -->
+        <section id="ticket" class="ticket" aria-labelledby="ticket-title" hidden tabindex="-1">
+          <div class="ticket__stub">
+            <h2 id="ticket-title" class="ticket__title">Nomor Antrean Anda</h2>
+            <p class="ticket__num" id="t-num">07</p>
+            <p class="ticket__note">Datanglah sesuai jam estimasi antrean agar tidak menunggu lama di ruang tunggu.</p>
+          </div>
+          <div class="ticket__body">
+            <div class="ticket__status-row">
+              <span class="badge badge--info" id="t-attendance-badge">Menunggu Kedatangan di Poli PTM</span>
+              <span class="badge" id="t-doctor-badge">dr. Ahmad Fauzi</span>
+            </div>
+            <dl class="facts">
+              <div class="fact">
+                <dt><svg class="ic"><use href="#i-calendar"/></svg>Hari</dt>
+                <dd id="t-date">Rabu, 25 November 2026</dd>
+              </div>
+              <div class="fact">
+                <dt><svg class="ic"><use href="#i-clock"/></svg>Sesi Jam</dt>
+                <dd id="t-time">09.00 – 10.00 WIB</dd>
+              </div>
+              <div class="fact">
+                <dt><svg class="ic"><use href="#i-activity"/></svg>Datang Pukul</dt>
+                <dd id="t-arrival">± 09.15 WIB (Sesuai Nomor Antrean)</dd>
+              </div>
+              <div class="fact">
+                <dt><svg class="ic"><use href="#i-pin"/></svg>Tempat</dt>
+                <dd>Poli PTM, Lantai 1</dd>
+              </div>
+            </dl>
+            <p class="remind"><svg class="ic"><use href="#i-bell"/></svg><span><strong>Reminder Kontrol H-3:</strong> Petugas akan mengirim pengingat lagi pada <strong id="t-remind">Minggu, 22 November</strong> agar Anda tidak terlewat jadwal kontrol medis.</span></p>
+            <div class="ticket__actions">
+              <button type="button" class="btn btn-line-danger" id="open-cancel">Batalkan Jadwal Ini</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- HERO: REMINDER KONTROL + LIHAT JADWAL KONTROL + BOOKING JADWAL KONTROL -->
+        <section id="booking" class="booking" aria-labelledby="booking-title" tabindex="-1">
+          <div class="booking__head">
+            <div class="booking__title-row">
+              <h2 id="booking-title" class="booking__title">Lihat &amp; Pesan Jadwal Kontrol</h2>
+              <span class="badge badge--ocean"><svg class="ic"><use href="#i-steth"/></svg>Poli PTM · dr. Ahmad Fauzi</span>
+            </div>
+            <p class="booking__subtitle">Daftar ulang kontrol dari rumah tanpa harus datang ke loket. Pilih tanggal dan jam yang masih tersedia agar tidak terjadi penumpukan pasien pada jam yang sama.</p>
+
+            <!-- FITUR 1: REMINDER KONTROL (FR-06 / US-06)
+                 Notifikasi kepada pasien untuk kontrol agar pasien yang memiliki sifat pelupa
+                 mendapat perhatian dari notifikasi dan memastikan tidak terlewat jadwal kontrol medis -->
+            <div class="reminder" id="reminder" role="note" aria-label="Reminder kontrol dari petugas">
+              <svg class="ic reminder__ic"><use href="#i-bell"/></svg>
+              <div class="reminder__text">
+                <p class="reminder__tag">Reminder Kontrol Medis · Perhatian Jadwal</p>
+                <p class="reminder__msg"><span id="reminder-patient">Ibu Siti</span>, atas arahan dokter, Anda diingatkan untuk <strong>kontrol kembali pada <span id="advice-date">Rabu, 25 November 2026</span></strong>. Silakan pilih jadwal di bawah ini agar jadwal kontrol medis Anda tidak terlewat.</p>
+                <p class="reminder__by">
+                  <span id="reminder-sender">Petugas Admin Poli PTM</span>
+                  <span aria-hidden="true">·</span>
+                  <span id="reminder-doctor">atas arahan dr. Ahmad Fauzi</span>
+                  <span aria-hidden="true">·</span>
+                  <span id="reminder-sent">dikirim Sabtu, 21 November</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FITUR 2 & 5: LIHAT JADWAL KONTROL & BOOKING JADWAL KONTROL (FR-03, FR-04) -->
+          <form id="booking-form" class="booking__form" novalidate>
+            <fieldset class="step">
+              <legend class="step__legend"><span class="step__n" aria-hidden="true">1</span>Lihat jadwal dokter &amp; pilih tanggal kontrol</legend>
+              <p class="step__hint step__hint--top">Jadwal dokter dan sisa kursi ditampilkan langsung agar jadwal antar-pasien tidak tabrakan.</p>
+              <div class="dates" id="dates"></div>
+            </fieldset>
+
+            <fieldset class="step" id="step-time" disabled>
+              <legend class="step__legend"><span class="step__n" aria-hidden="true">2</span>Pilih jam kedatangan (cegah penumpukan jam sama)</legend>
+              <p class="step__hint" id="time-hint">Pilih tanggal terlebih dahulu pada langkah 1, lalu daftar jam dan sisa kuota akan muncul di sini.</p>
+              <div class="slots" id="slots"></div>
+            </fieldset>
+
+            <div class="confirm" id="confirm">
+              <div class="confirm__info">
+                <p class="confirm__sum" id="summary" aria-live="polite">Belum ada jadwal yang dipilih.</p>
+                <p class="confirm__sub" id="summary-queue-hint">Nomor antrean dan jam estimasi kedatangan akan langsung terbit setelah Anda memesan.</p>
+              </div>
+              <p class="confirm__err" id="form-error" role="alert" hidden></p>
+              <button type="submit" class="btn btn-primary btn-xl" id="submit-btn" disabled>
+                <svg class="ic"><use href="#i-check"/></svg><span>Booking Jadwal Kontrol</span>
+              </button>
+            </div>
+          </form>
+
+          <div id="booking-locked" class="locked" hidden>
+            <svg class="ic"><use href="#i-info"/></svg>
+            <div>
+              <p><strong>Jadwal kontrol dan nomor antrean Anda sudah terdaftar.</strong></p>
+              <p>Dengan nomor antrean di atas, Anda cukup datang mendekati jam estimasi giliran tanpa perlu antre lama dari pagi. Jika ingin mengganti hari atau jam, batalkan dulu jadwal di atas.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 1B: RIWAYAT KONTROL (FR-08 / US-08)
+           Pasien melihat riwayat semua aktivitas kontrol untuk memudahkan pasien dan dokter
+           dalam memantau perkembangan kondisi kesehatan -->
+      <section id="view-riwayat" class="subview card-section" aria-labelledby="riwayat-title" hidden tabindex="-1">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Pemantauan Perkembangan Kesehatan</span>
+            <h2 id="riwayat-title">Riwayat Kontrol Medis</h2>
+            <p class="section-desc">Menampilkan riwayat semua aktivitas kontrol untuk memudahkan Anda dan dokter dalam memantau perkembangan kondisi kesehatan dari waktu ke waktu.</p>
+          </div>
+          <button type="button" class="btn btn-quiet" data-nav="booking">Kembali ke Jadwal &amp; Antrean</button>
+        </div>
+
+        <!-- Ringkasan Tren Kesehatan -->
+        <div class="trend-grid" id="health-trend">
+          <div class="trend-card">
+            <span class="trend-card__label">Tekanan Darah Terakhir</span>
+            <strong class="trend-card__val">130/82 <small>mmHg</small></strong>
+            <span class="trend-card__note trend-card__note--ok">Membaik (sebelumnya 145/90 mmHg)</span>
+          </div>
+          <div class="trend-card">
+            <span class="trend-card__label">Gula Darah Puasa</span>
+            <strong class="trend-card__val">124 <small>mg/dL</small></strong>
+            <span class="trend-card__note trend-card__note--ok">Terkendali (sebelumnya 148 mg/dL)</span>
+          </div>
+          <div class="trend-card">
+            <span class="trend-card__label">Kolesterol Total</span>
+            <strong class="trend-card__val">188 <small>mg/dL</small></strong>
+            <span class="trend-card__note trend-card__note--ok">Batas Normal (&lt;200 mg/dL)</span>
+          </div>
+        </div>
+
+        <div class="history-list" id="history-list" aria-label="Daftar riwayat aktivitas kontrol"></div>
+      </section>
+
+      <!-- VIEW 1C: HASIL PEMERIKSAAN TERAKHIR (FR-11, FR-12) -->
+      <section id="view-hasil" class="subview card-section" aria-labelledby="hasil-title" hidden tabindex="-1">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Rekam Pemeriksaan Dokter</span>
+            <h2 id="hasil-title">Hasil Pemeriksaan &amp; Keputusan Dokter</h2>
+            <p class="section-desc">Catatan hasil pemeriksaan terakhir oleh dokter di Poli PTM sebagai dasar penjadwalan kontrol berikutnya.</p>
+          </div>
+          <button type="button" class="btn btn-quiet" data-nav="booking">Kembali ke Jadwal &amp; Antrean</button>
+        </div>
+
+        <div id="latest-exam-box" class="exam-box"></div>
+      </section>
+
+      <!-- VIEW 1D: REMINDER KONTROL / DAFTAR NOTIFIKASI (FR-06 / US-06) -->
+      <section id="view-notifikasi" class="subview card-section" aria-labelledby="notif-title" hidden tabindex="-1">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Perhatian Jadwal Kontrol</span>
+            <h2 id="notif-title">Reminder Kontrol (Notifikasi Pasien)</h2>
+            <p class="section-desc">Notifikasi pengingat dari petugas agar pasien tidak lupa dan tidak terlewat jadwal kontrol medis.</p>
+          </div>
+          <button type="button" class="btn btn-quiet" data-nav="booking">Kembali ke Jadwal &amp; Antrean</button>
+        </div>
+
+        <div id="notif-list" class="notif-list"></div>
+      </section>
+
+      <aside class="help" aria-label="Bantuan">
+        <svg class="ic"><use href="#i-help"/></svg>
+        <p><strong>Butuh bantuan?</strong> Akun Anda sudah diaktifkan oleh petugas agar langsung siap pakai. Jika mengalami kendala, tanyakan kepada petugas di loket Poli PTM atau minta bantuan keluarga.</p>
+      </aside>
+    </div>
+
+    <!-- =====================================================
+         MODE 2: LOGIN RINGKAS PASIEN (US-02 & US-09)
+         Akun sudah dibuat & diaktivasi Admin agar tinggal langsung pakai
+         ===================================================== -->
+    <section id="login-app" class="app-view card-section" aria-labelledby="login-title" hidden tabindex="-1">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Akses Ramah Lansia · Tanpa Kata Sandi Rumit</span>
+          <h1 id="login-title">Masuk Akun Pasien PULIH</h1>
+          <p class="section-desc">Akun dibuat dan diaktifkan oleh petugas admin Puskesmas/Klinik agar Anda <strong>tinggal langsung pakai</strong> tanpa repot mendaftar sendiri.</p>
+        </div>
+      </div>
+
+      <form id="login-form" class="form-grid" novalidate>
+        <div class="field">
+          <label for="login-name">Nama Lengkap Pasien</label>
+          <input type="text" id="login-name" class="input" placeholder="Contoh: Siti Aminah" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="login-dob">Tanggal Lahir</label>
+          <input type="date" id="login-dob" class="input" required autocomplete="bday">
+        </div>
+        <p class="confirm__err" id="login-error" role="alert" hidden></p>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-xl"><svg class="ic"><use href="#i-check"/></svg><span>Masuk &amp; Lihat Jadwal Kontrol</span></button>
+        </div>
+      </form>
+
+      <div class="quick-accounts">
+        <h2>Pilih Cepat Akun Pasien (Data Terdaftar di Database)</h2>
+        <p class="section-desc">Klik salah satu pasien di bawah ini untuk langsung mencoba masuk (termasuk pasien baru yang Anda registrasi dan aktifkan dari Panel Admin):</p>
+        <div id="quick-patient-list" class="quick-grid"></div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         MODE 3: PANEL ADMIN PETUGAS POLI PTM
+         Mencakup:
+         - Registrasi Pasien (FR-01 / US-01)
+         - Aktivasi Akun Pasien (FR-02 / US-02)
+         - Verifikasi Kehadiran Pasien (FR-07 / US-07)
+         - Kirim Reminder Kontrol (FR-06 / US-06)
+         ===================================================== -->
+    <div id="admin-app" class="app-view" hidden>
+      <section class="greet">
+        <div class="greet__top">
+          <div>
+            <span class="eyebrow">Mode Petugas Administrasi · Poli PTM</span>
+            <h1>Panel Admin Manajemen Kontrol PULIH</h1>
+            <p class="greet__date">Kelola registrasi pasien ke database, aktivasi akun siap pakai, verifikasi kehadiran &amp; slot antrean, serta pengiriman reminder kontrol.</p>
+          </div>
+          <button type="button" class="btn btn-quiet" id="back-to-patient-btn">
+            <svg class="ic"><use href="#i-user"/></svg><span>Lihat Tampilan Pasien</span>
+          </button>
+        </div>
+
+        <!-- Ringkasan Evaluasi Slot Antrean & Partisipasi Kedatangan -->
+        <div class="kpi-grid" id="admin-kpis">
+          <div class="kpi-card">
+            <span class="kpi-card__label">Data Pasien Tervalidasi</span>
+            <strong class="kpi-card__val" id="kpi-total-patients">4</strong>
+            <span class="kpi-card__sub">Terdata resmi di database</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-card__label">Akun Aktif Siap Pakai</span>
+            <strong class="kpi-card__val" id="kpi-active-accounts">2</strong>
+            <span class="kpi-card__sub" id="kpi-pending-accounts">1 menunggu aktivasi</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-card__label">Ketersediaan Slot Hari Layanan</span>
+            <strong class="kpi-card__val" id="kpi-slot-avail">48 / 50</strong>
+            <span class="kpi-card__sub" id="kpi-booked-count">2 slot terisi antrean</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-card__label">Partisipasi Kedatangan Pasien</span>
+            <strong class="kpi-card__val" id="kpi-attendance-rate">100%</strong>
+            <span class="kpi-card__sub" id="kpi-attendance-detail">Evaluasi kehadiran booking</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sub-tab Admin untuk layar sempit & cepat -->
+      <div class="admin-tabs" role="tablist" aria-label="Modul Admin">
+        <button type="button" class="admin-tab is-active" data-admin-nav="kehadiran">1. Verifikasi Kehadiran &amp; Slot Antrean</button>
+        <button type="button" class="admin-tab" data-admin-nav="registrasi">2. Registrasi Pasien (Database)</button>
+        <button type="button" class="admin-tab" data-admin-nav="aktivasi">3. Aktivasi Akun Pasien (Siap Pakai)</button>
+        <button type="button" class="admin-tab" data-admin-nav="reminder">4. Kirim Reminder Kontrol</button>
+      </div>
+
+      <!-- ADMIN SECTION 1: VERIFIKASI KEHADIRAN PASIEN (FR-07 / US-07)
+           Admin mengelola kehadiran pasien agar mengetahui pasien yang booking datang atau tidak,
+           menyusun ketersediaan slot antrean secara efektif sekaligus mengevaluasi tingkat partisipasi kedatangan pasien -->
+      <section id="admin-view-kehadiran" class="admin-section card-section" aria-labelledby="adm-hadir-title">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Fitur Inti Admin · FR-07 &amp; US-07</span>
+            <h2 id="adm-hadir-title">Verifikasi Kehadiran Pasien &amp; Evaluasi Slot Antrean</h2>
+            <p class="section-desc">Kelola kehadiran pasien untuk mengetahui siapa saja pasien booking yang datang atau tidak, menyusun ketersediaan slot antrean secara efektif, sekaligus mengevaluasi tingkat partisipasi kedatangan pasien.</p>
+          </div>
+        </div>
+
+        <div class="slot-eval-bar" id="slot-eval-bar"></div>
+
+        <div id="admin-attendance-list" class="admin-list"></div>
+      </section>
+
+      <!-- ADMIN SECTION 2: REGISTRASI PASIEN (FR-01 / US-01)
+           Admin membuat akun pasien dan melakukan registrasi terhadap data yang diberikan pasien menuju database
+           untuk memastikan seluruh data pasien terdata secara resmi dan tervalidasi -->
+      <section id="admin-view-registrasi" class="admin-section card-section" aria-labelledby="adm-reg-title" hidden>
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Fitur Inti Admin · FR-01 &amp; US-01</span>
+            <h2 id="adm-reg-title">Registrasi Pasien ke Database Resmi</h2>
+            <p class="section-desc">Admin meregistrasikan data identitas yang diberikan pasien menuju database faskes guna memastikan seluruh data pasien terdata secara resmi, tervalidasi, dan bebas duplikasi.</p>
+          </div>
+        </div>
+
+        <form id="admin-reg-form" class="form-grid" novalidate>
+          <div class="field">
+            <label for="reg-name">Nama Lengkap Pasien (Sesuai KTP/BPJS)</label>
+            <input type="text" id="reg-name" class="input" placeholder="Contoh: Bapak Sudirman" required>
+          </div>
+          <div class="field">
+            <label for="reg-dob">Tanggal Lahir</label>
+            <input type="date" id="reg-dob" class="input" value="1957-04-15" required>
+          </div>
+          <div class="field">
+            <label for="reg-rm">Nomor Rekam Medis / NIK Tervalidasi</label>
+            <input type="text" id="reg-rm" class="input" placeholder="Contoh: RM-2026-0120" required>
+          </div>
+          <div class="field">
+            <label for="reg-phone">Nomor Telepon / WhatsApp Keluarga atau Pasien</label>
+            <input type="tel" id="reg-phone" class="input" placeholder="Contoh: 0812-3456-7890" required>
+          </div>
+          <div class="field">
+            <label for="reg-bpjs">Kategori Kepesertaan</label>
+            <select id="reg-bpjs" class="input">
+              <option value="BPJS">BPJS Kesehatan</option>
+              <option value="Non-BPJS">Non-BPJS (Umum)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="reg-decision">Keputusan Medis Dokter Pemeriksa (dr. Ahmad Fauzi)</label>
+            <select id="reg-decision" class="input">
+              <option value="kontrol">Perlu Kontrol Lanjutan (Jalur Kontrol)</option>
+              <option value="rujuk">Perlu Dirujuk ke RS Lanjutan (Jalur Rujukan BPJS)</option>
+            </select>
+          </div>
+          <div class="field" id="reg-advice-wrap">
+            <label for="reg-advice-date">Rekomendasi Tanggal Kontrol Berikutnya (Instruksi Dokter)</label>
+            <input type="date" id="reg-advice-date" class="input" required>
+          </div>
+          <div class="field">
+            <label for="reg-vital">Catatan Pemeriksaan Awal (Tekanan Darah &amp; Gula Darah)</label>
+            <input type="text" id="reg-vital" class="input" placeholder="Contoh: TD 140/88 mmHg, GDP 134 mg/dL — Hipertensi & DM terkontrol" value="TD 138/86 mmHg, GDP 130 mg/dL — Perlu kontrol rutin">
+          </div>
+          <div class="field field--full">
+            <label class="checkbox-row">
+              <input type="checkbox" id="reg-auto-activate" checked>
+              <span><strong>Langsung aktifkan akun pasien (Siap Pakai)</strong> jika dokter menetapkan perlu kontrol, agar pasien tinggal langsung pakai tanpa kendala teknis pendaftaran.</span>
+            </label>
+          </div>
+          <p class="confirm__err" id="reg-error" role="alert" hidden></p>
+          <div class="form-actions field--full">
+            <button type="submit" class="btn btn-primary btn-xl">
+              <svg class="ic"><use href="#i-user-plus"/></svg><span>Simpan &amp; Validasi Data Pasien ke Database</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ADMIN SECTION 3: AKTIVASI AKUN PASIEN (FR-02 / US-02)
+           Admin membuat aktivasi akun pasien bagi pasien agar tinggal langsung pakai,
+           mempermudah aksesibilitas bagi pasien yang mengalami kendala teknis pendaftaran -->
+      <section id="admin-view-aktivasi" class="admin-section card-section" aria-labelledby="adm-akt-title" hidden>
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Fitur Inti Admin · FR-02 &amp; US-02</span>
+            <h2 id="adm-akt-title">Aktivasi Akun Pasien (Langsung Siap Pakai)</h2>
+            <p class="section-desc">Admin membuat aktivasi akun bagi pasien jalur kontrol agar akun <strong>tinggal langsung pakai</strong> (masuk cukup dengan Nama + Tanggal Lahir). Mempermudah aksesibilitas bagi pasien lansia yang mengalami kendala teknis pendaftaran mandiri.</p>
+          </div>
+        </div>
+
+        <div id="admin-activation-list" class="admin-list"></div>
+      </section>
+
+      <!-- ADMIN SECTION 4: KIRIM REMINDER KONTROL (FR-06, FR-20 / US-06) -->
+      <section id="admin-view-reminder" class="admin-section card-section" aria-labelledby="adm-rem-title" hidden>
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Fitur Inti · FR-06 &amp; US-06</span>
+            <h2 id="adm-rem-title">Kirim Reminder Kontrol ke Pasien</h2>
+            <p class="section-desc">Kirim notifikasi pengingat kontrol (Pengingat Daftar sebelum booking &amp; Pengingat Jadwal H-3 sesudah booking) agar pasien yang memiliki sifat pelupa mendapat perhatian dari notifikasi dan tidak terlewat jadwal kontrol medis.</p>
+          </div>
+        </div>
+
+        <div id="admin-reminder-list" class="admin-list"></div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- Navigasi bawah untuk ponsel (Mode Pasien) -->
+  <nav class="tabbar" id="mobile-tabbar" aria-label="Menu utama pasien">
+    <a href="#jadwal" data-nav="booking" aria-current="page"><svg class="ic"><use href="#i-home"/></svg><span>Jadwal</span></a>
+    <a href="#riwayat" data-nav="riwayat"><svg class="ic"><use href="#i-history"/></svg><span>Riwayat</span></a>
+    <a href="#hasil" data-nav="hasil"><svg class="ic"><use href="#i-clipboard"/></svg><span>Hasil</span></a>
+    <a href="#reminder" data-nav="notifikasi"><svg class="ic"><use href="#i-bell"/></svg><span>Reminder</span><span class="dot" id="mob-dot" aria-label="Pengingat aktif">1</span></a>
+  </nav>
+
+  <dialog id="cancel-dialog" class="dialog" aria-labelledby="cancel-title">
+    <form method="dialog">
+      <h2 id="cancel-title">Batalkan jadwal kontrol?</h2>
+      <p id="cancel-text">Jadwal Anda akan dibatalkan dan slot antrean akan dibuka kembali untuk pasien lain.</p>
+      <div class="dialog__actions">
+        <button value="keep" class="btn btn-primary" autofocus>Tidak, Tetap Simpan</button>
+        <button value="cancel" class="btn btn-line-danger">Ya, Batalkan Jadwal</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
