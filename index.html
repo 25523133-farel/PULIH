@@ -45,38 +45,69 @@
           <circle cx="32" cy="21" r="2.6" fill="#00B4D8"/>
         </svg>
         <span class="brand__name">PULIH</span>
-        <span class="brand__tag" id="role-badge">Pasien</span>
+        <span class="brand__tag" id="role-badge">PASIEN</span>
       </a>
 
-      <!-- Menu Navigasi Pasien (FR-03 s.d. FR-08) -->
-      <nav class="mainnav" id="patient-nav" aria-label="Menu pasien">
-        <a href="#jadwal" data-nav="booking" aria-current="page"><svg class="ic"><use href="#i-calendar"/></svg>Jadwal &amp; Antrean</a>
-        <a href="#riwayat" data-nav="riwayat"><svg class="ic"><use href="#i-history"/></svg>Riwayat Kontrol</a>
-        <a href="#hasil" data-nav="hasil"><svg class="ic"><use href="#i-clipboard"/></svg>Hasil Pemeriksaan</a>
-        <a href="#reminder" data-nav="notifikasi"><svg class="ic"><use href="#i-bell"/></svg>Reminder<span class="dot" id="nav-dot" aria-label="Pengingat aktif">1</span></a>
+      <!-- 1. Menu Pasien: hanya muncul saat di mode Pasien -->
+      <nav class="mainnav" id="patient-nav" aria-label="Menu navigasi pasien">
+        <a href="#jadwal" data-nav="booking" class="nav-item is-active" aria-current="page">
+          <svg class="ic"><use href="#i-calendar"/></svg><span>Jadwal &amp; Antrean</span>
+        </a>
+        <a href="#riwayat" data-nav="riwayat" class="nav-item">
+          <svg class="ic"><use href="#i-history"/></svg><span>Riwayat Kontrol</span>
+        </a>
+        <a href="#reminder" data-nav="notifikasi" class="nav-item">
+          <svg class="ic"><use href="#i-bell"/></svg><span>Reminder</span><span class="dot" id="nav-dot" aria-label="Pengingat aktif">1</span>
+        </a>
       </nav>
 
-      <!-- Menu Navigasi Admin (FR-01, FR-02, FR-06, FR-07) -->
-      <nav class="mainnav" id="admin-nav" aria-label="Menu admin" hidden>
-        <a href="#admin-kehadiran" data-admin-nav="kehadiran" aria-current="page"><svg class="ic"><use href="#i-check"/></svg>Verifikasi Kehadiran</a>
-        <a href="#admin-registrasi" data-admin-nav="registrasi"><svg class="ic"><use href="#i-user-plus"/></svg>Registrasi Pasien</a>
-        <a href="#admin-aktivasi" data-admin-nav="aktivasi"><svg class="ic"><use href="#i-shield"/></svg>Aktivasi Akun</a>
-        <a href="#admin-reminder" data-admin-nav="reminder"><svg class="ic"><use href="#i-bell"/></svg>Kirim Reminder</a>
+      <!-- 2. Menu Admin: hanya muncul saat di mode Admin -->
+      <nav class="mainnav" id="admin-nav" aria-label="Menu navigasi admin" hidden>
+        <a href="#admin-kehadiran" data-admin-nav="kehadiran" class="nav-item is-active" aria-current="page">
+          <svg class="ic"><use href="#i-check"/></svg><span>Verifikasi Hadir</span>
+        </a>
+        <a href="#admin-registrasi" data-admin-nav="registrasi" class="nav-item">
+          <svg class="ic"><use href="#i-user-plus"/></svg><span>Registrasi Pasien</span>
+        </a>
+        <a href="#admin-aktivasi" data-admin-nav="aktivasi" class="nav-item">
+          <svg class="ic"><use href="#i-shield"/></svg><span>Aktivasi Akun</span>
+        </a>
+        <a href="#admin-reminder" data-admin-nav="reminder" class="nav-item">
+          <svg class="ic"><use href="#i-bell"/></svg><span>Kirim Reminder</span>
+        </a>
       </nav>
 
       <div class="tools">
-        <button type="button" class="btn-role" id="switch-role-btn" title="Beralih antara tampilan Pasien dan Panel Admin">
-          <svg class="ic"><use href="#i-users"/></svg>
-          <span id="switch-role-label">Panel Admin</span>
-        </button>
+        <!-- Pengatur ukuran font (selalu tersedia untuk aksesibilitas lansia) -->
         <div class="textsize" role="group" aria-label="Ukuran huruf">
-          <button type="button" data-size="md" aria-pressed="true" aria-label="Huruf biasa">A</button>
-          <button type="button" data-size="lg" aria-pressed="false" aria-label="Huruf besar">A</button>
-          <button type="button" data-size="xl" aria-pressed="false" aria-label="Huruf sangat besar">A</button>
+          <span class="textsize__label" aria-hidden="true">TEKS</span>
+          <button type="button" data-size="md" aria-pressed="true" aria-label="Huruf biasa" title="Huruf Standar">A</button>
+          <button type="button" data-size="lg" aria-pressed="false" aria-label="Huruf besar" title="Huruf Besar">A</button>
+          <button type="button" data-size="xl" aria-pressed="false" aria-label="Huruf sangat besar" title="Huruf Sangat Besar">A</button>
         </div>
-        <button type="button" class="btn-quiet" id="logout-btn" title="Ganti akun pasien atau keluar">
-          <svg class="ic"><use href="#i-logout"/></svg><span>Ganti Pasien</span>
-        </button>
+
+        <div class="tool-divider" aria-hidden="true"></div>
+
+        <!-- Tombol Aksi Navigasi (Sesuai Peran) -->
+        <div class="role-actions">
+          <!-- Tombol Pintasan Panel Admin (tampil di Mode Pasien & Mode Login) -->
+          <button type="button" class="btn-role" id="switch-role-btn" title="Buka Panel Admin Poli PTM">
+            <svg class="ic"><use href="#i-shield"/></svg>
+            <span id="switch-role-label">Panel Admin</span>
+          </button>
+
+          <!-- Tombol Ganti Akun Pasien (tampil di Mode Pasien) -->
+          <button type="button" class="btn-quiet" id="logout-btn" title="Ganti akun pasien yang aktif">
+            <svg class="ic"><use href="#i-logout"/></svg>
+            <span id="logout-label">Ganti Pasien</span>
+          </button>
+
+          <!-- Tombol Keluar Mode Admin (hanya tampil di Mode Admin) -->
+          <button type="button" class="btn-quiet" id="exit-admin-btn" title="Keluar dari Panel Admin ke Mode Pasien" hidden>
+            <svg class="ic"><use href="#i-user"/></svg>
+            <span>Keluar / Mode Pasien</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -115,8 +146,8 @@
           </div>
           <div class="ticket__body">
             <div class="ticket__status-row">
-              <span class="badge badge--info" id="t-attendance-badge">Menunggu Kedatangan di Poli PTM</span>
-              <span class="badge" id="t-doctor-badge">dr. Ahmad Fauzi</span>
+              <span class="badge badge--ok" id="t-attendance-badge"><svg class="ic"><use href="#i-check"/></svg>Kehadiran Terverifikasi Hadir</span>
+              <span class="badge badge--ocean" id="t-doctor-badge"><svg class="ic"><use href="#i-steth"/></svg>dr. Ahmad Fauzi</span>
             </div>
             <dl class="facts">
               <div class="fact">
@@ -207,20 +238,29 @@
         </section>
       </div>
 
-      <!-- VIEW 1B: RIWAYAT KONTROL (FR-08 / US-08)
-           Pasien melihat riwayat semua aktivitas kontrol untuk memudahkan pasien dan dokter
-           dalam memantau perkembangan kondisi kesehatan -->
+      <!-- VIEW 1B: RIWAYAT KONTROL & HASIL PEMERIKSAAN (FR-08 / US-08)
+           Pasien melihat riwayat semua aktivitas kontrol untuk memantau perkembangan kesehatan -->
       <section id="view-riwayat" class="subview card-section" aria-labelledby="riwayat-title" hidden tabindex="-1">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Pemantauan Perkembangan Kesehatan</span>
-            <h2 id="riwayat-title">Riwayat Kontrol Medis</h2>
-            <p class="section-desc">Menampilkan riwayat semua aktivitas kontrol untuk memudahkan Anda dan dokter dalam memantau perkembangan kondisi kesehatan dari waktu ke waktu.</p>
+            <span class="eyebrow">Pemantauan Terpadu Perkembangan Kesehatan</span>
+            <h2 id="riwayat-title">Riwayat Kontrol &amp; Hasil Pemeriksaan Medis</h2>
+            <p class="section-desc">Menampilkan riwayat semua aktivitas kontrol serta hasil evaluasi dokter untuk memudahkan Anda dan dokter dalam memantau kondisi kesehatan dari waktu ke waktu.</p>
           </div>
           <button type="button" class="btn btn-quiet" data-nav="booking">Kembali ke Jadwal &amp; Antrean</button>
         </div>
 
+        <!-- Rekam Hasil Pemeriksaan Terakhir -->
+        <div class="history-highlight">
+          <div class="history-highlight__head">
+            <span class="eyebrow" style="margin:0;"><svg class="ic" style="display:inline-block;vertical-align:-2px;"><use href="#i-clipboard"/></svg> Rekam Pemeriksaan Terakhir Dokter</span>
+            <span class="badge badge--ok" id="exam-badge-status">Terkontrol Baik</span>
+          </div>
+          <div id="latest-exam-box" class="exam-box"></div>
+        </div>
+
         <!-- Ringkasan Tren Kesehatan -->
+        <h3 style="font-size:1.15rem;margin-top:.75rem;">Tren Parameter Kesehatan Utama (PTM)</h3>
         <div class="trend-grid" id="health-trend">
           <div class="trend-card">
             <span class="trend-card__label">Tekanan Darah Terakhir</span>
@@ -239,21 +279,8 @@
           </div>
         </div>
 
+        <h3 style="font-size:1.15rem;margin-top:1rem;">Daftar Catatan Kunjungan Kontrol Sebelumnya</h3>
         <div class="history-list" id="history-list" aria-label="Daftar riwayat aktivitas kontrol"></div>
-      </section>
-
-      <!-- VIEW 1C: HASIL PEMERIKSAAN TERAKHIR (FR-11, FR-12) -->
-      <section id="view-hasil" class="subview card-section" aria-labelledby="hasil-title" hidden tabindex="-1">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">Rekam Pemeriksaan Dokter</span>
-            <h2 id="hasil-title">Hasil Pemeriksaan &amp; Keputusan Dokter</h2>
-            <p class="section-desc">Catatan hasil pemeriksaan terakhir oleh dokter di Poli PTM sebagai dasar penjadwalan kontrol berikutnya.</p>
-          </div>
-          <button type="button" class="btn btn-quiet" data-nav="booking">Kembali ke Jadwal &amp; Antrean</button>
-        </div>
-
-        <div id="latest-exam-box" class="exam-box"></div>
       </section>
 
       <!-- VIEW 1D: REMINDER KONTROL / DAFTAR NOTIFIKASI (FR-06 / US-06) -->
@@ -280,98 +307,96 @@
          MODE 2: LOGIN RINGKAS PASIEN (US-02 & US-09)
          Akun sudah dibuat & diaktivasi Admin agar tinggal langsung pakai
          ===================================================== -->
-    <section id="login-app" class="app-view card-section" aria-labelledby="login-title" hidden tabindex="-1">
-      <div class="section-head">
-        <div>
-          <span class="eyebrow">Akses Ramah Lansia · Tanpa Kata Sandi Rumit</span>
-          <h1 id="login-title">Masuk Akun Pasien PULIH</h1>
-          <p class="section-desc">Akun dibuat dan diaktifkan oleh petugas admin Puskesmas/Klinik agar Anda <strong>tinggal langsung pakai</strong> tanpa repot mendaftar sendiri.</p>
+    <section id="login-app" class="app-view login-container" aria-labelledby="login-title" hidden tabindex="-1">
+      <div class="card-section login-card">
+        <div class="section-head text-center">
+          <div>
+            <span class="eyebrow">Akses Mandiri Ramah Lansia</span>
+            <h1 id="login-title">Masuk Akun Pasien PULIH</h1>
+            <p class="section-desc">Akun dibuat dan diaktifkan oleh petugas admin faskes agar Anda <strong>tinggal langsung pakai</strong> cukup dengan Nama &amp; Tanggal Lahir.</p>
+          </div>
         </div>
-      </div>
 
-      <form id="login-form" class="form-grid" novalidate>
-        <div class="field">
-          <label for="login-name">Nama Lengkap Pasien</label>
-          <input type="text" id="login-name" class="input" placeholder="Contoh: Siti Aminah" required autocomplete="name">
-        </div>
-        <div class="field">
-          <label for="login-dob">Tanggal Lahir</label>
-          <input type="date" id="login-dob" class="input" required autocomplete="bday">
-        </div>
-        <p class="confirm__err" id="login-error" role="alert" hidden></p>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary btn-xl"><svg class="ic"><use href="#i-check"/></svg><span>Masuk &amp; Lihat Jadwal Kontrol</span></button>
-        </div>
-      </form>
+        <form id="login-form" class="login-form-grid" novalidate>
+          <div class="field">
+            <label for="login-name">Nama Lengkap Pasien</label>
+            <input type="text" id="login-name" class="input" placeholder="Contoh: Ibu Siti Aminah" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="login-dob">Tanggal Lahir</label>
+            <input type="date" id="login-dob" class="input" required autocomplete="bday">
+          </div>
+          <p class="confirm__err" id="login-error" role="alert" hidden></p>
+          <div class="form-actions login-actions">
+            <button type="submit" class="btn btn-primary btn-xl btn-full"><svg class="ic"><use href="#i-check"/></svg><span>Masuk &amp; Lihat Jadwal Kontrol</span></button>
+          </div>
+        </form>
 
-      <div class="quick-accounts">
-        <h2>Pilih Cepat Akun Pasien (Data Terdaftar di Database)</h2>
-        <p class="section-desc">Klik salah satu pasien di bawah ini untuk langsung mencoba masuk (termasuk pasien baru yang Anda registrasi dan aktifkan dari Panel Admin):</p>
-        <div id="quick-patient-list" class="quick-grid"></div>
+        <div class="quick-accounts">
+          <div class="quick-accounts__head">
+            <h2>Pilih Cepat Akun Pasien Terdaftar (Demo Akses)</h2>
+            <p class="section-desc">Klik salah satu kartu di bawah ini untuk mencoba masuk secara instan:</p>
+          </div>
+          <div id="quick-patient-list" class="quick-grid"></div>
+        </div>
       </div>
     </section>
 
     <!-- =====================================================
          MODE 3: PANEL ADMIN PETUGAS POLI PTM
-         Mencakup:
-         - Registrasi Pasien (FR-01 / US-01)
-         - Aktivasi Akun Pasien (FR-02 / US-02)
-         - Verifikasi Kehadiran Pasien (FR-07 / US-07)
-         - Kirim Reminder Kontrol (FR-06 / US-06)
          ===================================================== -->
     <div id="admin-app" class="app-view" hidden>
-      <section class="greet">
+      <section class="greet greet--admin">
         <div class="greet__top">
           <div>
-            <span class="eyebrow">Mode Petugas Administrasi · Poli PTM</span>
-            <h1>Panel Admin Manajemen Kontrol PULIH</h1>
-            <p class="greet__date">Kelola registrasi pasien ke database, aktivasi akun siap pakai, verifikasi kehadiran &amp; slot antrean, serta pengiriman reminder kontrol.</p>
+            <span class="eyebrow">Panel Operasional Petugas Poli PTM</span>
+            <h1>Panel Admin Manajemen Kontrol &amp; Antrean PULIH</h1>
+            <p class="greet__date">Kelola registrasi data pasien, aktivasi akun siap pakai, verifikasi kehadiran fisik, serta pengiriman reminder kontrol.</p>
           </div>
-          <button type="button" class="btn btn-quiet" id="back-to-patient-btn">
-            <svg class="ic"><use href="#i-user"/></svg><span>Lihat Tampilan Pasien</span>
-          </button>
         </div>
 
-        <!-- Ringkasan Evaluasi Slot Antrean & Partisipasi Kedatangan -->
+        <!-- 4 Kartu Statistik dengan Ikon Relevan & Aksen Warna Lembut -->
         <div class="kpi-grid" id="admin-kpis">
-          <div class="kpi-card">
-            <span class="kpi-card__label">Data Pasien Tervalidasi</span>
-            <strong class="kpi-card__val" id="kpi-total-patients">4</strong>
-            <span class="kpi-card__sub">Terdata resmi di database</span>
+          <div class="kpi-card kpi-card--blue">
+            <div class="kpi-card__icon"><svg class="ic"><use href="#i-users"/></svg></div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Data Pasien Tervalidasi</span>
+              <strong class="kpi-card__val" id="kpi-total-patients">4</strong>
+              <span class="kpi-card__sub">Terdata resmi di database</span>
+            </div>
           </div>
-          <div class="kpi-card">
-            <span class="kpi-card__label">Akun Aktif Siap Pakai</span>
-            <strong class="kpi-card__val" id="kpi-active-accounts">2</strong>
-            <span class="kpi-card__sub" id="kpi-pending-accounts">1 menunggu aktivasi</span>
+          <div class="kpi-card kpi-card--emerald">
+            <div class="kpi-card__icon"><svg class="ic"><use href="#i-shield"/></svg></div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Akun Aktif Siap Pakai</span>
+              <strong class="kpi-card__val" id="kpi-active-accounts">2</strong>
+              <span class="kpi-card__sub" id="kpi-pending-accounts">1 menunggu aktivasi</span>
+            </div>
           </div>
-          <div class="kpi-card">
-            <span class="kpi-card__label">Ketersediaan Slot Hari Layanan</span>
-            <strong class="kpi-card__val" id="kpi-slot-avail">48 / 50</strong>
-            <span class="kpi-card__sub" id="kpi-booked-count">2 slot terisi antrean</span>
+          <div class="kpi-card kpi-card--cyan">
+            <div class="kpi-card__icon"><svg class="ic"><use href="#i-calendar"/></svg></div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Ketersediaan Slot Hari Ini</span>
+              <strong class="kpi-card__val" id="kpi-slot-avail">48 / 50</strong>
+              <span class="kpi-card__sub" id="kpi-booked-count">2 slot terisi antrean</span>
+            </div>
           </div>
-          <div class="kpi-card">
-            <span class="kpi-card__label">Partisipasi Kedatangan Pasien</span>
-            <strong class="kpi-card__val" id="kpi-attendance-rate">100%</strong>
-            <span class="kpi-card__sub" id="kpi-attendance-detail">Evaluasi kehadiran booking</span>
+          <div class="kpi-card kpi-card--amber">
+            <div class="kpi-card__icon"><svg class="ic"><use href="#i-activity"/></svg></div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Partisipasi Kedatangan</span>
+              <strong class="kpi-card__val" id="kpi-attendance-rate">100%</strong>
+              <span class="kpi-card__sub" id="kpi-attendance-detail">Evaluasi kehadiran booking</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Sub-tab Admin untuk layar sempit & cepat -->
-      <div class="admin-tabs" role="tablist" aria-label="Modul Admin">
-        <button type="button" class="admin-tab is-active" data-admin-nav="kehadiran">1. Verifikasi Kehadiran &amp; Slot Antrean</button>
-        <button type="button" class="admin-tab" data-admin-nav="registrasi">2. Registrasi Pasien (Database)</button>
-        <button type="button" class="admin-tab" data-admin-nav="aktivasi">3. Aktivasi Akun Pasien (Siap Pakai)</button>
-        <button type="button" class="admin-tab" data-admin-nav="reminder">4. Kirim Reminder Kontrol</button>
-      </div>
-
-      <!-- ADMIN SECTION 1: VERIFIKASI KEHADIRAN PASIEN (FR-07 / US-07)
-           Admin mengelola kehadiran pasien agar mengetahui pasien yang booking datang atau tidak,
-           menyusun ketersediaan slot antrean secara efektif sekaligus mengevaluasi tingkat partisipasi kedatangan pasien -->
+      <!-- ADMIN SECTION 1: VERIFIKASI KEHADIRAN PASIEN (FR-07 / US-07) -->
       <section id="admin-view-kehadiran" class="admin-section card-section" aria-labelledby="adm-hadir-title">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Fitur Inti Admin · FR-07 &amp; US-07</span>
+            <span class="eyebrow">Manajemen Antrean Poli</span>
             <h2 id="adm-hadir-title">Verifikasi Kehadiran Pasien &amp; Evaluasi Slot Antrean</h2>
             <p class="section-desc">Kelola kehadiran pasien untuk mengetahui siapa saja pasien booking yang datang atau tidak, menyusun ketersediaan slot antrean secara efektif, sekaligus mengevaluasi tingkat partisipasi kedatangan pasien.</p>
           </div>
@@ -382,13 +407,11 @@
         <div id="admin-attendance-list" class="admin-list"></div>
       </section>
 
-      <!-- ADMIN SECTION 2: REGISTRASI PASIEN (FR-01 / US-01)
-           Admin membuat akun pasien dan melakukan registrasi terhadap data yang diberikan pasien menuju database
-           untuk memastikan seluruh data pasien terdata secara resmi dan tervalidasi -->
+      <!-- ADMIN SECTION 2: REGISTRASI PASIEN (FR-01 / US-01) -->
       <section id="admin-view-registrasi" class="admin-section card-section" aria-labelledby="adm-reg-title" hidden>
         <div class="section-head">
           <div>
-            <span class="eyebrow">Fitur Inti Admin · FR-01 &amp; US-01</span>
+            <span class="eyebrow">Database Pasien Faskes</span>
             <h2 id="adm-reg-title">Registrasi Pasien ke Database Resmi</h2>
             <p class="section-desc">Admin meregistrasikan data identitas yang diberikan pasien menuju database faskes guna memastikan seluruh data pasien terdata secara resmi, tervalidasi, dan bebas duplikasi.</p>
           </div>
@@ -448,14 +471,12 @@
         </form>
       </section>
 
-      <!-- ADMIN SECTION 3: AKTIVASI AKUN PASIEN (FR-02 / US-02)
-           Admin membuat aktivasi akun pasien bagi pasien agar tinggal langsung pakai,
-           mempermudah aksesibilitas bagi pasien yang mengalami kendala teknis pendaftaran -->
+      <!-- ADMIN SECTION 3: AKTIVASI AKUN PASIEN (FR-02 / US-02) -->
       <section id="admin-view-aktivasi" class="admin-section card-section" aria-labelledby="adm-akt-title" hidden>
         <div class="section-head">
           <div>
-            <span class="eyebrow">Fitur Inti Admin · FR-02 &amp; US-02</span>
-            <h2 id="adm-akt-title">Aktivasi Akun Pasien (Langsung Siap Pakai)</h2>
+            <span class="eyebrow">Akses Langsung Pakai</span>
+            <h2 id="adm-akt-title">Aktivasi Akun Pasien (Siap Pakai)</h2>
             <p class="section-desc">Admin membuat aktivasi akun bagi pasien jalur kontrol agar akun <strong>tinggal langsung pakai</strong> (masuk cukup dengan Nama + Tanggal Lahir). Mempermudah aksesibilitas bagi pasien lansia yang mengalami kendala teknis pendaftaran mandiri.</p>
           </div>
         </div>
@@ -467,7 +488,7 @@
       <section id="admin-view-reminder" class="admin-section card-section" aria-labelledby="adm-rem-title" hidden>
         <div class="section-head">
           <div>
-            <span class="eyebrow">Fitur Inti · FR-06 &amp; US-06</span>
+            <span class="eyebrow">Pengingat Jadwal Medis</span>
             <h2 id="adm-rem-title">Kirim Reminder Kontrol ke Pasien</h2>
             <p class="section-desc">Kirim notifikasi pengingat kontrol (Pengingat Daftar sebelum booking &amp; Pengingat Jadwal H-3 sesudah booking) agar pasien yang memiliki sifat pelupa mendapat perhatian dari notifikasi dan tidak terlewat jadwal kontrol medis.</p>
           </div>
@@ -479,12 +500,11 @@
 
   </main>
 
-  <!-- Navigasi bawah untuk ponsel (Mode Pasien) -->
-  <nav class="tabbar" id="mobile-tabbar" aria-label="Menu utama pasien">
-    <a href="#jadwal" data-nav="booking" aria-current="page"><svg class="ic"><use href="#i-home"/></svg><span>Jadwal</span></a>
-    <a href="#riwayat" data-nav="riwayat"><svg class="ic"><use href="#i-history"/></svg><span>Riwayat</span></a>
-    <a href="#hasil" data-nav="hasil"><svg class="ic"><use href="#i-clipboard"/></svg><span>Hasil</span></a>
-    <a href="#reminder" data-nav="notifikasi"><svg class="ic"><use href="#i-bell"/></svg><span>Reminder</span><span class="dot" id="mob-dot" aria-label="Pengingat aktif">1</span></a>
+  <!-- Navigasi bawah untuk ponsel (Hanya untuk Mode Pasien) -->
+  <nav class="tabbar" id="mobile-tabbar" aria-label="Menu navigasi ponsel">
+    <a href="#jadwal" data-nav="booking" class="nav-item is-active" aria-current="page"><svg class="ic"><use href="#i-calendar"/></svg><span>Jadwal</span></a>
+    <a href="#riwayat" data-nav="riwayat" class="nav-item"><svg class="ic"><use href="#i-history"/></svg><span>Riwayat</span></a>
+    <a href="#reminder" data-nav="notifikasi" class="nav-item"><svg class="ic"><use href="#i-bell"/></svg><span>Reminder</span><span class="dot" id="mob-dot" aria-label="Pengingat aktif">1</span></a>
   </nav>
 
   <dialog id="cancel-dialog" class="dialog" aria-labelledby="cancel-title">
@@ -500,6 +520,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="assets/js/app.js"></script>
+  <script type="module" src="/assets/js/app.js"></script>
 </body>
 </html>

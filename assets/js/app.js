@@ -5,7 +5,7 @@
    3. Lihat nomor antrean    (Datang sesuai antrean, kurangi tunggu)
    4. Riwayat kontrol        (Pantau perkembangan kondisi kesehatan)
    5. Booking jadwal kontrol (Daftar ulang daring tanpa datang fisik)
-   6. Registrasi pasien      (Admin registrasi data resmi ke database)
+   6. Registrasi pasien      Memastikan data resmi masuk database
    7. Aktivasi akun pasien   (Admin aktifkan akun siap langsung pakai)
    8. Verifikasi kehadiran   (Admin kelola hadir, slot & partisipasi)
    ========================================================= */
@@ -320,6 +320,8 @@
     switchRoleBtn: $("#switch-role-btn"),
     switchRoleLabel: $("#switch-role-label"),
     logoutBtn: $("#logout-btn"),
+    logoutLabel: $("#logout-label"),
+    exitAdminBtn: $("#exit-admin-btn"),
     patientNav: $("#patient-nav"),
     adminNav: $("#admin-nav"),
     mobileTabbar: $("#mobile-tabbar"),
@@ -340,7 +342,6 @@
     // Patient subviews
     viewBooking: $("#view-booking"),
     viewRiwayat: $("#view-riwayat"),
-    viewHasil: $("#view-hasil"),
     viewNotifikasi: $("#view-notifikasi"),
 
     // Ticket (Lihat Nomor Antrean)
@@ -1090,22 +1091,49 @@
     const isAdmin = state.currentRole === "admin";
     const isLogin = state.currentRole === "login";
 
+    // Tampilkan View Utama yang sesuai
     el.patientApp.hidden = !isPatient;
     el.adminApp.hidden = !isAdmin;
     el.loginApp.hidden = !isLogin;
 
-    el.patientNav.hidden = !isPatient;
-    el.adminNav.hidden = !isAdmin;
-    el.mobileTabbar.hidden = !isPatient;
+    // 1. Role-based Navbar Header
+    if (isLogin) {
+      // Di Halaman Login: sembunyikan menu internal (Jadwal, Riwayat, Reminder)
+      el.patientNav.hidden = true;
+      el.adminNav.hidden = true;
+      el.mobileTabbar.hidden = true;
 
-    if (isAdmin) {
-      el.roleBadge.textContent = "Admin Poli PTM";
-      el.roleBadge.classList.add("is-admin");
-      el.switchRoleLabel.textContent = "Tampilan Pasien";
+      el.roleBadge.textContent = "MASUK";
+      el.roleBadge.className = "brand__tag is-login";
+
+      // Di mode login: tampilkan tombol pintasan Panel Admin dan sembunyikan tombol logout/exit
+      el.switchRoleBtn.hidden = false;
+      el.logoutBtn.hidden = true;
+      el.exitAdminBtn.hidden = true;
+    } else if (isAdmin) {
+      // Di Mode Admin: tampilkan menu khusus admin dan tombol Keluar / Mode Pasien di kanan atas
+      el.patientNav.hidden = true;
+      el.adminNav.hidden = false;
+      el.mobileTabbar.hidden = true;
+
+      el.roleBadge.textContent = "ADMIN";
+      el.roleBadge.className = "brand__tag is-admin";
+
+      el.switchRoleBtn.hidden = true;
+      el.logoutBtn.hidden = true;
+      el.exitAdminBtn.hidden = false;
     } else {
-      el.roleBadge.textContent = isLogin ? "Masuk Pasien" : "Pasien";
-      el.roleBadge.classList.remove("is-admin");
-      el.switchRoleLabel.textContent = "Panel Admin";
+      // Di Mode Pasien: tampilkan menu pasien
+      el.patientNav.hidden = false;
+      el.adminNav.hidden = true;
+      el.mobileTabbar.hidden = false;
+
+      el.roleBadge.textContent = "PASIEN";
+      el.roleBadge.className = "brand__tag";
+
+      el.switchRoleBtn.hidden = false;
+      el.logoutBtn.hidden = false;
+      el.exitAdminBtn.hidden = true;
     }
 
     if (isPatient) {
@@ -1113,14 +1141,22 @@
       const v = state.currentPatientView || "booking";
       el.viewBooking.hidden = v !== "booking";
       el.viewRiwayat.hidden = v !== "riwayat";
-      el.viewHasil.hidden = v !== "hasil";
       el.viewNotifikasi.hidden = v !== "notifikasi";
 
-      $$("[data-nav]").forEach((a) => {
-        if (a.tagName === "A") {
-          if (a.dataset.nav === v) a.setAttribute("aria-current", "page");
-          else a.removeAttribute("aria-current");
-        }
+      // Sorot menu navigasi pasien yang aktif
+      $$("[data-nav]", el.patientNav).forEach((link) => {
+        const match = link.dataset.nav === v;
+        link.classList.toggle("is-active", match);
+        if (match) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      });
+
+      // Mobile tabbar
+      $$("[data-nav]", el.mobileTabbar).forEach((link) => {
+        const match = link.dataset.nav === v;
+        link.classList.toggle("is-active", match);
+        if (match) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
       });
 
       renderPatientHeader();
@@ -1140,6 +1176,7 @@
       $("#admin-view-aktivasi").hidden = av !== "aktivasi";
       $("#admin-view-reminder").hidden = av !== "reminder";
 
+      // Update menu admin (di navbar dan di grid tab 2x2)
       $$("[data-admin-nav]").forEach((item) => {
         const active = item.dataset.adminNav === av;
         item.classList.toggle("is-active", active);
@@ -1157,7 +1194,7 @@
   }
 
   /* ---------- Event Listeners ---------- */
-  // Navigasi menu pasien
+  // Navigasi Subview Pasien
   $$("[data-nav]").forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
@@ -1165,7 +1202,7 @@
     });
   });
 
-  // Navigasi menu admin
+  // Navigasi Subview Admin
   $$("[data-admin-nav]").forEach((item) => {
     item.addEventListener("click", (e) => {
       e.preventDefault();
@@ -1173,24 +1210,22 @@
     });
   });
 
-  // Beralih peran Pasien <-> Admin
+  // Tombol Pintasan Panel Admin (Header)
   el.switchRoleBtn.addEventListener("click", () => {
-    if (state.currentRole === "admin") {
-      setRole("patient");
-      toast("Beralih ke Tampilan Pasien (Ramah Lansia).");
-    } else {
-      setRole("admin");
-      toast("Beralih ke Panel Petugas Admin Poli PTM.");
-    }
+    setRole("admin");
+    toast("Beralih ke Panel Petugas Admin Poli PTM.");
   });
 
-  el.backToPatientBtn.addEventListener("click", () => {
+  // Tombol Keluar dari Mode Admin
+  el.exitAdminBtn.addEventListener("click", () => {
     setRole("patient");
+    toast("Kembali ke Tampilan Pasien.");
   });
 
-  // Ganti Pasien / Login Ringkas
+  // Tombol Ganti Pasien (Mode Pasien)
   el.logoutBtn.addEventListener("click", () => {
     setRole("login");
+    toast("Membuka Halaman Masuk Pasien.");
   });
 
   el.loginForm.addEventListener("submit", (e) => {

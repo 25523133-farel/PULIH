@@ -1,0 +1,14 @@
+{
+  "name": "pulih",
+  "version": "1.4.0",
+  "description": "PULIH — Sistem Manajemen Kontrol Pasien PTM (Vite + Three.js)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "6.4.5"
+  }
+}
