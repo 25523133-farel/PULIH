@@ -284,6 +284,52 @@
   let state = loadState();
   const saveState = () => localStorage.setItem(STORE_STATE, JSON.stringify(state));
 
+  /* ---------- Integrasi Backend PHP Laravel & Supabase Database ---------- */
+  const API_BASE = "/api";
+
+  async function apiRequest(method, path, body = null) {
+    try {
+      const opts = {
+        method,
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      };
+      if (body !== null) {
+        opts.body = JSON.stringify(body);
+      }
+      const res = await fetch(`${API_BASE}${path}`, opts);
+      const data = await res.json().catch(() => null);
+      if (data && data.state) {
+        applyServerState(data.state);
+      }
+      return { ok: res.ok, status: res.status, data };
+    } catch (_) {
+      return { ok: false, offline: true, data: null };
+    }
+  }
+
+  function applyServerState(serverState) {
+    if (!serverState || !Array.isArray(serverState.patients)) return;
+    state.patients = serverState.patients;
+    state.bookings = Array.isArray(serverState.bookings) ? serverState.bookings : [];
+    state.history = serverState.history || {};
+    if (!state.patients.some((p) => p.id === state.currentPatientId)) {
+      const activeFirst = state.patients.find((p) => p.accountStatus === "active") || state.patients[0];
+      if (activeFirst) state.currentPatientId = activeFirst.id;
+    }
+    saveState();
+  }
+
+  async function syncFromBackend() {
+    const res = await apiRequest("GET", "/state");
+    if (res.ok && res.data) {
+      applyServerState(res.data);
+      renderAll();
+    }
+  }
+
   /* ---------- Helper Data ---------- */
   const getCurrentPatient = () =>
     state.patients.find((p) => p.id === state.currentPatientId) || state.patients[0];
@@ -807,8 +853,33 @@
     });
   }
 
-  function attemptPatientLogin(nameInput, dobInput) {
+  async function attemptPatientLogin(nameInput, dobInput) {
     const cleanName = nameInput.trim().toLowerCase();
+    if (!cleanName) {
+      el.loginError.textContent = "Mohon masukkan Nama Lengkap pasien.";
+      el.loginError.hidden = false;
+      return;
+    }
+
+    const apiRes = await apiRequest("POST", "/auth/patient-login", {
+      name: nameInput.trim(),
+      dob: dobInput,
+    });
+
+    if (!apiRes.offline && apiRes.data) {
+      if (!apiRes.ok) {
+        el.loginError.textContent = apiRes.data.message || "Gagal memverifikasi akun pasien.";
+        el.loginError.hidden = false;
+        return;
+      }
+      state.currentPatientId = apiRes.data.patientId;
+      selectedDate = null;
+      selectedSlot = null;
+      setPatientView("booking");
+      toast(apiRes.data.message || "Selamat datang. Akun Anda aktif dan siap digunakan.");
+      return;
+    }
+
     const found = state.patients.find(
       (p) => p.name.toLowerCase().includes(cleanName) && (!dobInput || p.dob === dobInput)
     );
@@ -928,17 +999,24 @@
     }
 
     $$("[data-verify-id]", el.adminAttendanceList).forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         const bId = btn.dataset.verifyId;
         const newStatus = btn.dataset.status;
         const b = state.bookings.find((x) => x.id === bId);
         if (!b) return;
         const p = state.patients.find((x) => x.id === b.patientId);
-        b.attendance = newStatus;
-        const now = new Date();
-        b.verifiedAt = `${String(now.getHours()).padStart(2, "0")}.${String(now.getMinutes()).padStart(2, "0")} WIB`;
-        b.verifiedBy = "Admin Poli PTM";
-        saveState();
+
+        const apiRes = await apiRequest("PATCH", `/admin/bookings/${encodeURIComponent(bId)}/attendance`, {
+          status: newStatus,
+        });
+
+        if (apiRes.offline) {
+          b.attendance = newStatus;
+          const now = new Date();
+          b.verifiedAt = `${String(now.getHours()).padStart(2, "0")}.${String(now.getMinutes()).padStart(2, "0")} WIB`;
+          b.verifiedBy = "Admin Poli PTM";
+          saveState();
+        }
         renderAll();
         if (newStatus === "present") {
           toast(`Kehadiran ${p ? p.name : "pasien"} (Antrean ${b.queue}) berhasil diverifikasi HADIR.`);
@@ -1002,14 +1080,17 @@
     });
 
     $$("[data-activate-id]", el.adminActivationList).forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         const p = state.patients.find((x) => x.id === btn.dataset.activateId);
         if (!p) return;
-        p.accountStatus = "active";
-        p.reminderSentAt = iso(today);
-        p.reminderBy = "Admin Poli PTM";
-        p.reminderCount = (p.reminderCount || 0) + 1;
-        saveState();
+        const apiRes = await apiRequest("PATCH", `/admin/patients/${encodeURIComponent(p.id)}/activate`);
+        if (apiRes.offline) {
+          p.accountStatus = "active";
+          p.reminderSentAt = iso(today);
+          p.reminderBy = "Admin Poli PTM";
+          p.reminderCount = (p.reminderCount || 0) + 1;
+          saveState();
+        }
         renderAll();
         toast(`Akun ${p.name} berhasil DIAKTIFKAN dan siap langsung pakai!`);
       });
@@ -1065,13 +1146,16 @@
       });
 
     $$("[data-send-reminder]", el.adminReminderList).forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         const p = state.patients.find((x) => x.id === btn.dataset.sendReminder);
         if (!p) return;
-        p.reminderSentAt = iso(today);
-        p.reminderBy = "Petugas Admin Poli PTM";
-        p.reminderCount = (p.reminderCount || 0) + 1;
-        saveState();
+        const apiRes = await apiRequest("POST", `/admin/patients/${encodeURIComponent(p.id)}/reminders`);
+        if (apiRes.offline) {
+          p.reminderSentAt = iso(today);
+          p.reminderBy = "Petugas Admin Poli PTM";
+          p.reminderCount = (p.reminderCount || 0) + 1;
+          saveState();
+        }
         renderAll();
         toast(`Notifikasi Reminder Kontrol berhasil dikirim kepada ${p.name} (${p.phone}).`);
       });
@@ -1248,7 +1332,7 @@
     renderSummary();
   });
 
-  el.form.addEventListener("submit", (e) => {
+  el.form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!selectedDate || !selectedSlot) return;
 
@@ -1267,6 +1351,34 @@
     const iconUse = $("use", el.submit);
     labelSpan.textContent = "Memproses Booking & Nomor Antrean…";
     iconUse.setAttribute("href", "#i-clock");
+
+    const apiRes = await apiRequest("POST", "/bookings", {
+      patientId: p.id,
+      date: iso(selectedDate),
+      slotId: selectedSlot.id,
+    });
+
+    if (!apiRes.offline && apiRes.data) {
+      el.submit.classList.remove("is-loading");
+      labelSpan.textContent = "Booking Jadwal Kontrol";
+      iconUse.setAttribute("href", "#i-check");
+
+      if (!apiRes.ok) {
+        el.error.textContent = apiRes.data.message || "Gagal memproses booking.";
+        el.error.hidden = false;
+        el.submit.disabled = false;
+        return;
+      }
+
+      renderBookingState({ animate: true });
+      el.ticket.scrollIntoView({
+        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "start",
+      });
+      el.ticket.focus({ preventScroll: true });
+      toast(apiRes.data.message || `Booking berhasil! Nomor Antrean Anda ${apiRes.data.queue}.`);
+      return;
+    }
 
     setTimeout(() => {
       const orderInSlot = CAPACITY - left + 1;
@@ -1299,7 +1411,7 @@
       });
       el.ticket.focus({ preventScroll: true });
       toast(`Booking berhasil! Nomor Antrean Anda ${queue}.`);
-    }, 650);
+    }, 350);
   });
 
   // Pembatalan Booking
@@ -1311,11 +1423,14 @@
     el.dialog.showModal();
   });
 
-  el.dialog.addEventListener("close", () => {
+  el.dialog.addEventListener("close", async () => {
     if (el.dialog.returnValue !== "cancel") return;
     const p = getCurrentPatient();
-    state.bookings = state.bookings.filter((b) => b.patientId !== p.id);
-    saveState();
+    const apiRes = await apiRequest("DELETE", `/bookings/${encodeURIComponent(p.id)}`);
+    if (apiRes.offline) {
+      state.bookings = state.bookings.filter((b) => b.patientId !== p.id);
+      saveState();
+    }
     selectedDate = null;
     selectedSlot = null;
     el.form.reset();
@@ -1336,7 +1451,7 @@
     else el.regAutoActivate.checked = true;
   });
 
-  el.adminRegForm.addEventListener("submit", (e) => {
+  el.adminRegForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     el.regError.hidden = true;
 
@@ -1356,7 +1471,36 @@
       return;
     }
 
-    // Validasi duplikasi di database
+    const apiRes = await apiRequest("POST", "/admin/patients", {
+      name,
+      dob,
+      rm,
+      phone,
+      bpjs,
+      decision,
+      adviceDate,
+      vital,
+      autoActivate,
+    });
+
+    if (!apiRes.offline && apiRes.data) {
+      if (!apiRes.ok) {
+        el.regError.textContent = apiRes.data.message || "Gagal menyimpan data pasien.";
+        el.regError.hidden = false;
+        return;
+      }
+
+      el.adminRegForm.reset();
+      el.regDob.value = "1957-04-15";
+      el.regAdviceDate.value = iso(defaultRecommended);
+      el.regAutoActivate.checked = true;
+
+      setAdminView("aktivasi");
+      toast(apiRes.data.message);
+      return;
+    }
+
+    // Fallback offline jika backend tidak aktif
     const duplicate = state.patients.some(
       (p) => p.rm.toLowerCase() === rm.toLowerCase() || (p.name.toLowerCase() === name.toLowerCase() && p.dob === dob)
     );
@@ -1441,6 +1585,7 @@
   if (demo === "reset") {
     state = createInitialState();
     saveState();
+    apiRequest("POST", "/reset").then(() => renderAll());
   } else if (demo === "admin") {
     state.currentRole = "admin";
     saveState();
@@ -1448,4 +1593,5 @@
 
   applySize(localStorage.getItem(STORE_SIZE) || "md");
   renderAll();
+  syncFromBackend();
 })();

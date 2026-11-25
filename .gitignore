@@ -1,3 +1,11 @@
-node_modules/
-dist/
+node_modules
+dist
 .DS_Store
+/vendor
+/storage/*.key
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+/database/database.sqlite
+.env
